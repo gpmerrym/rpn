@@ -15,7 +15,7 @@ public class TwoArgumentUndoer extends OneArgumentUndoer {
 		
 		public void undo(Stack<Double> stack){
 			stack.pop();
-			super.parentUndo(stack);
+			parentUndo(stack);
 			
 		}
 		
