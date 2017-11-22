@@ -103,9 +103,7 @@ public class HomeController {
 		undoer.undo(stack);
 		redoers.push(undoer);
 
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("redirect:/");
-		return mv;
+		return redirectFromHome();
 	} 
 	
 	@PostMapping("/redo")
@@ -114,11 +112,10 @@ public class HomeController {
 		Godoer godoer = redoers.pop();
 		godoer.goDoIt();
 		undoers.push(godoer);
+		return redirectFromHome();
 		
 		
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("redirect:/");
-		return mv;
+		
 	}
 
 	private ModelAndView doOperation(Godoer calcy) {
@@ -129,6 +126,11 @@ public class HomeController {
 		mv.setViewName("redirect:/");
 		return mv;
 
+	}
+	private ModelAndView redirectFromHome() {
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("redirect:/");
+		return mv;
 	}
 
 }
