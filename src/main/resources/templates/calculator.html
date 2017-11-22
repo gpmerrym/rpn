@@ -60,6 +60,13 @@
 			</form>
 		</div>
 		{{/hasUndoer}}
+		{{#hasRedoer}}
+		<div>
+			<form method="post" action="/redo">
+				<button>Redo</button>
+			</form>
+		</div>
+		{{/hasRedoer}}
 
 	</div>
 	<div class="stack-holder">

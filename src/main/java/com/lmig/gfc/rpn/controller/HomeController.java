@@ -7,12 +7,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.lmig.gfc.rpn.models.AbsoluterOfOneNumber;
 import com.lmig.gfc.rpn.models.AddTwoNumbersTogether;
 import com.lmig.gfc.rpn.models.DivideTwoNumbersTogether;
 import com.lmig.gfc.rpn.models.ExponentTwoNumbersTogether;
+import com.lmig.gfc.rpn.models.Godoer;
 import com.lmig.gfc.rpn.models.MultiplyTwoNumbersTogether;
 import com.lmig.gfc.rpn.models.OneArgumentUndoer;
-import com.lmig.gfc.rpn.models.PushUndoer;
+import com.lmig.gfc.rpn.models.ItDoesThePushing;
 import com.lmig.gfc.rpn.models.SubtractTwoNumberTogether;
 import com.lmig.gfc.rpn.models.TwoArgumentUndoer;
 import com.lmig.gfc.rpn.models.TwoNumberCalculation;
@@ -22,11 +24,13 @@ import com.lmig.gfc.rpn.models.Undoer;
 public class HomeController {
 
 	private Stack<Double> stack;
-	private Stack<Undoer> undoers;
+	private Stack<Godoer> undoers;
+	private Stack<Godoer> redoers;
 
 	public HomeController() {
 		stack = new Stack<Double>();
-		undoers = new Stack<Undoer>();
+		undoers = new Stack<Godoer>();
+		redoers = new Stack<Godoer>();
 	}
 
 	@GetMapping("/")
@@ -36,6 +40,7 @@ public class HomeController {
 		mv.addObject("stack", stack);
 		mv.addObject("hasTwoOrMoreNumbers", stack.size() >= 2);
 		mv.addObject("hasUndoer", undoers.size() > 0);
+		mv.addObject("hasRedoer", redoers.size() > 0);
 		return mv;
 	}
 
@@ -44,14 +49,8 @@ public class HomeController {
 		// uppercase Double - can be nullable
 		// lower case D - expects the value to be present at all times
 
-		stack.push(value);
-		undoers.push(new PushUndoer());
-		// undoers = new PushUndoer();
-		// undoer = null;
-
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("redirect:/");
-		return mv;
+		ItDoesThePushing pusher = new ItDoesThePushing(stack, value);
+		return doOperation(pusher);
 	}
 
 	@PostMapping("/add")
@@ -81,7 +80,7 @@ public class HomeController {
 		MultiplyTwoNumbersTogether multiplier = new MultiplyTwoNumbersTogether(stack);
 		return doOperation(multiplier);
 	}
-	
+
 	@PostMapping("/exponent")
 	public ModelAndView exponentTwoNumbers() {
 
@@ -93,32 +92,36 @@ public class HomeController {
 	@PostMapping("/abs")
 	public ModelAndView absOneNumber() {
 
-		double value = stack.pop();
-		undoers.push(new OneArgumentUndoer(value));
-
-		double result = Math.abs(value);
-
-		stack.push(result);
-
-		ModelAndView mv = new ModelAndView();
-		mv.setViewName("redirect:/");
-		return mv;
+		AbsoluterOfOneNumber absoluter = new AbsoluterOfOneNumber(stack);
+		return doOperation(absoluter);
 	}
 
 	@PostMapping("/undo")
 	public ModelAndView undo() {
-		// uppercase Double - can be nullable
-		// lower case D - expects the value to be present at all times
-		Undoer undoer = undoers.pop();
+		
+		Godoer undoer = undoers.pop();
 		undoer.undo(stack);
-		// undoer = null;
+		redoers.push(undoer);
 
+		ModelAndView mv = new ModelAndView();
+		mv.setViewName("redirect:/");
+		return mv;
+	} 
+	
+	@PostMapping("/redo")
+	public ModelAndView redo() {
+		
+		Godoer godoer = redoers.pop();
+		godoer.goDoIt();
+		undoers.push(godoer);
+		
+		
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("redirect:/");
 		return mv;
 	}
 
-	private ModelAndView doOperation(TwoNumberCalculation calcy) {
+	private ModelAndView doOperation(Godoer calcy) {
 		calcy.goDoIt();
 		undoers.push(calcy);
 

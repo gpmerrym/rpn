@@ -2,7 +2,7 @@ package com.lmig.gfc.rpn.models;
 
 import java.util.Stack;
 
-public abstract class TwoNumberCalculation implements Undoer {
+public abstract class TwoNumberCalculation implements Godoer, Undoer {
 	// removes the ability for someone to call "new"
 
 	private Stack<Double> stack;
@@ -10,7 +10,6 @@ public abstract class TwoNumberCalculation implements Undoer {
 
 	public TwoNumberCalculation(Stack<Double> stack) {
 		this.stack = stack;
-
 	}
 
 	public void goDoIt() {
