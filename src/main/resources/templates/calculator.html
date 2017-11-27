@@ -17,14 +17,13 @@
 				<button>Enter</button>
 			</div>
 		</form>
-		
+		{{#hasOneOrMoreNumbers}}
 		<div>
 			<form method="post" action="/abs">
 				<button>abs</button>
 			</form>
 		</div>
-		
-
+		{{/hasOneOrMoreNumbers}}
 		{{#hasTwoOrMoreNumbers}}
 		<div>
 			<form method="post" action="/add">

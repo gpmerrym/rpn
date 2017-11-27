@@ -38,6 +38,7 @@ public class HomeController {
 		ModelAndView mv = new ModelAndView();
 		mv.setViewName("calculator");
 		mv.addObject("stack", stack);
+		mv.addObject("hasOneOrMoreNumbers", stack.size() >= 1);
 		mv.addObject("hasTwoOrMoreNumbers", stack.size() >= 2);
 		mv.addObject("hasUndoer", undoers.size() > 0);
 		mv.addObject("hasRedoer", redoers.size() > 0);
